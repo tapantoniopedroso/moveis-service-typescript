@@ -1,19 +1,14 @@
-import { Category } from "./category"
+import { Category, CategoryProperties } from "./category"
 import {omit} from "lodash"
+import {validate as validateUUID} from 'uuid'
 
 describe("Category Unit Test", () => {
     it('constructor of category', () => {
 
         //triple AAA Arrange Act Assert
         //Arrange
-        // const props = {name: 'Movie', 
-        // description: 'teste description',
-        // created_at: new Date(),
-        // is_active: true}
-
-        //wconst props = {name: 'Movie'}
+    
         //act
-        //const category = new Category(props);
         let category = new Category({name: 'Movie'})
 
         //assert
@@ -77,15 +72,82 @@ describe("Category Unit Test", () => {
             name: 'Movie',
             created_at
         })
-        // expect(category.props).toStrictEqual({
-        //     name: "Movie",
-        //     description: null,
-        //     is_active: true
-        // })
 
-        // expect(category.name).toBe('Movie');
-        // expect(category.description).toBe('teste description')
-        // expect(category.is_active).toBeTruthy()
-        // expect(category.create_at).toBe(props.created_at)
     })
-})
+
+    it('getter of name field',() => {
+        const category = new Category({name: 'Movie'})
+
+        expect(category.name).toBe('Movie')
+    });
+
+    it('getter and setter of description field', ()=>{
+        let category = new Category({name: 'Movie'})
+        expect(category.description).toBeNull()
+
+        category = new Category({name: 'Movie', description: 'description test'})
+        expect(category.description).toBe('description test')
+
+        category = new Category({name: 'Movie'})
+        category['description'] = 'description test'
+        expect(category.description).toBe('description test')
+
+    })
+
+    it('getter and setter of is_active field', ()=>{
+        let category = new Category({name: 'Movie'})
+        expect(category.is_active).toBeTruthy()
+
+        category = new Category({name: 'Movie', is_active: false})
+        expect(category.is_active).toBeFalsy()
+
+        category = new Category({name: 'Movie', is_active: true})
+        expect(category.is_active).toBeTruthy()
+
+    })
+
+    it('getter of created_at field',() => {
+        let category = new Category({name: 'Movie'})
+
+        expect(category.created_at).toBeInstanceOf(Date)
+
+        const created_at = new Date()
+        category = new Category({name:'Movie', created_at})
+        expect(category.created_at).toBe(created_at)
+    });
+
+    it('test id field', ()=>{
+        type CategoryData = {props: CategoryProperties, id?:string}
+        const data: CategoryData[] = [
+            {props: {name: 'Movie'}},
+            {props: {name: 'Movie'}, id: null },
+            {props: {name: 'Movie'}, id: undefined},
+            {props: {name: 'Movie'}, id: '941472a8-f1e9-470f-b8e3-d680a0fe8d10'}
+
+        ]
+
+        data.forEach(i => {
+
+            const category = new Category(i.props, i.id)
+            expect(category.id).not.toBeNull()
+            expect(validateUUID(category.id)).toBeTruthy()
+        })
+
+        // let category = new Category({name:'Movie'})
+        // expect(category.id).not.toBeNull()
+        // expect(validateUUID(category.id)).toBeTruthy()
+
+        // category = new Category({name:'Movie'}, null)
+        // expect(category.id).not.toBeNull()
+        // expect(validateUUID(category.id)).toBeTruthy()
+
+        // category = new Category({name:'Movie'}, undefined)
+        // expect(category.id).not.toBeNull()
+        // expect(validateUUID(category.id)).toBeTruthy()
+
+        // category = new Category({name:'Movie'}, '941472a8-f1e9-470f-b8e3-d680a0fe8d10')
+        // expect(category.id).not.toBeNull()
+        // expect(validateUUID(category.id)).toBeTruthy()
+    })
+
+});
